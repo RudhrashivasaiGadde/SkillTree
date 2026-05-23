@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillTree</title>
+    <link rel="icon" type="image/webp" href="assets/logo.webp" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="dark-mode home-active">
+    <div class="loading-screen" id="loadingScreen" aria-label="SkillTree loading">
+      <div class="loader-lockup">
+        <img class="loader-logo" src="assets/logo.webp" alt="" />
+        <span class="loader-word">SkillTree</span>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="SkillTree">
+        <img class="brand-logo" src="assets/logo.webp" alt="" />
+        <span>SkillTree</span>
+      </a>
+
+      <nav class="nav-actions" aria-label="Tree actions">
+        <button class="nav-button" id="addSkillBtn" type="button">
+          <span class="button-glyph" aria-hidden="true">+</span>
+          <span>Add skill</span>
+        </button>
+        <button class="nav-button" id="addSubskillBtn" type="button">
+          <span class="button-glyph" aria-hidden="true">+</span>
+          <span>Add subskill</span>
+        </button>
+        <button class="nav-button" id="addProjectBtn" type="button">
+          <span class="button-glyph" aria-hidden="true">+</span>
+          <span>Add project</span>
+        </button>
+        <button class="nav-button" id="addCertificateBtn" type="button">
+          <span class="button-glyph" aria-hidden="true">+</span>
+          <span>Add certificate</span>
+        </button>
+        <button class="nav-button" id="connectBtn" type="button" aria-pressed="false">
+          <span class="button-glyph" aria-hidden="true">o</span>
+          <span>Connect</span>
+        </button>
+        <button class="nav-button" id="cutBtn" type="button" aria-pressed="false">
+          <span class="button-glyph" aria-hidden="true">/</span>
+          <span>Cut</span>
+        </button>
+        <button class="nav-button icon-button" id="zoomOutBtn" type="button" aria-label="Zoom out">
+          <span aria-hidden="true">-</span>
+        </button>
+        <button class="nav-button icon-button" id="zoomInBtn" type="button" aria-label="Zoom in">
+          <span aria-hidden="true">+</span>
+        </button>
+        <button class="nav-button" id="arrangeBtn" type="button">
+          <span class="button-glyph" aria-hidden="true">*</span>
+          <span>Arrange</span>
+        </button>
+        <button class="nav-button pro-button" id="proModeBtn" type="button" aria-pressed="false">
+          <span class="button-glyph" aria-hidden="true">P</span>
+          <span>Pro mode</span>
+        </button>
+        <button class="nav-button icon-button pro-menu-button" id="proMenuBtn" type="button" aria-label="Open Pro mode tools" aria-expanded="false">
+          <span class="menu-line" aria-hidden="true"></span>
+          <span class="menu-line" aria-hidden="true"></span>
+          <span class="menu-line" aria-hidden="true"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="home-screen" id="homeScreen">
+      <section class="home-hero" aria-labelledby="homeTitle">
+        <div class="home-brand-row">
+          <img class="home-logo" src="assets/logo.webp" alt="" />
+          <span>SkillTree</span>
+        </div>
+        <h1 id="homeTitle">Map your skills, projects, and certificates in one connected workspace.</h1>
+        <p class="home-copy">
+          Build a living profile graph, organize subskills, attach projects to multiple skills, and keep certificates close to the work they prove.
+        </p>
+        <div class="home-actions">
+          <button class="home-button primary" id="homeLoadProfileBtn" type="button">Load profile</button>
+          <button class="home-button secondary" id="homeCreateProfileBtn" type="button">Create profile</button>
+        </div>
+        <div class="home-points" aria-label="SkillTree highlights">
+          <span>Large draggable graph</span>
+          <span>Multi-skill projects</span>
+          <span>Local profile storage</span>
+        </div>
+      </section>
+    </main>
+
+    <main class="app-shell" id="appShell" hidden>
+      <section class="graph-shell" aria-labelledby="graphTitle">
+        <div class="graph-topline">
+          <div>
+            <p class="eyebrow">Tree Board</p>
+            <h1 id="graphTitle">SkillTree workspace</h1>
+          </div>
+          <div class="graph-stats" id="graphStats" aria-live="polite"></div>
+        </div>
+
+        <div class="graph-canvas" id="graphCanvas">
+          <div class="graph-world" id="graphWorld">
+            <svg class="edge-layer" id="edgeLayer" viewBox="0 0 12000 9000" aria-hidden="true">
+              <defs>
+                <linearGradient id="skillLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#18d8ca" />
+                  <stop offset="55%" stop-color="#ff7a57" />
+                  <stop offset="100%" stop-color="#ffd15f" />
+                </linearGradient>
+                <linearGradient id="projectLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#7e8cff" />
+                  <stop offset="50%" stop-color="#27df93" />
+                  <stop offset="100%" stop-color="#ff8a55" />
+                </linearGradient>
+                <linearGradient id="certificateLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffd15f" />
+                  <stop offset="55%" stop-color="#ff6ea4" />
+                  <stop offset="100%" stop-color="#18d8ca" />
+                </linearGradient>
+                <linearGradient id="invertedLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff6ea4" />
+                  <stop offset="50%" stop-color="#ffd15f" />
+                  <stop offset="100%" stop-color="#18d8ca" />
+                </linearGradient>
+                <filter id="lineGlow" x="-45%" y="-45%" width="190%" height="190%">
+                  <feGaussianBlur stdDeviation="4.5" result="blur" />
+                  <feColorMatrix
+                    in="blur"
+                    type="matrix"
+                    values="1 0 0 0 0.12 0 1 0 0 0.70 0 0 1 0 0.78 0 0 0 0.48 0"
+                    result="glow"
+                  />
+                  <feMerge>
+                    <feMergeNode in="glow" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <g id="edgeGroup"></g>
+            </svg>
+            <div class="node-layer" id="nodeLayer"></div>
+          </div>
+          <div class="connect-status" id="connectStatus" hidden></div>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="SkillTree controls">
+        <section class="panel">
+          <div class="panel-head">
+            <p class="eyebrow">Profile</p>
+            <h2>Stored profile</h2>
+          </div>
+          <form class="stack-form" id="profileForm">
+            <label class="field">
+              <span>Profile key</span>
+              <input id="profileId" name="profileId" type="text" autocomplete="off" placeholder="default" />
+            </label>
+            <label class="field">
+              <span>Name</span>
+              <input id="profileName" name="profileName" type="text" autocomplete="name" placeholder="Your name" />
+            </label>
+            <div class="split-actions">
+              <button class="primary-button" type="submit">Save profile</button>
+              <button class="secondary-button" id="loadProfileBtn" type="button">Load</button>
+            </div>
+          </form>
+          <div class="profile-preview is-empty" id="profilePreview">
+            <span class="preview-initials">ST</span>
+            <div>
+              <strong>SkillTree</strong>
+              <p>Empty profile loaded</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <p class="eyebrow" id="editorEyebrow">Composer</p>
+            <h2 id="editorTitle">Add skill</h2>
+          </div>
+
+          <form class="stack-form editor-form" id="skillForm">
+            <label class="field">
+              <span>Skill name</span>
+              <input id="skillName" name="skillName" type="text" placeholder="React" />
+            </label>
+            <label class="field">
+              <span>Focus</span>
+              <input id="skillFocus" name="skillFocus" type="text" placeholder="Components and state" />
+            </label>
+            <label class="field">
+              <span id="skillParentLabel">Parent skill</span>
+              <select id="skillParent" name="skillParent"></select>
+            </label>
+            <div class="checkbox-grid" aria-label="Optional skill branches">
+              <label class="check-field">
+                <input id="skillProjectBranch" name="skillProjectBranch" type="checkbox" />
+                <span>Projects branch</span>
+              </label>
+              <label class="check-field">
+                <input id="skillCertificateBranch" name="skillCertificateBranch" type="checkbox" />
+                <span>Certifications branch</span>
+              </label>
+            </div>
+            <label class="field">
+              <span>Color</span>
+              <input id="skillColor" name="skillColor" type="color" value="#18d8ca" />
+            </label>
+            <button class="primary-button" id="skillSubmitBtn" type="submit">Add skill</button>
+          </form>
+
+          <form class="stack-form editor-form" id="projectForm" hidden>
+            <label class="field">
+              <span>Project name</span>
+              <input id="projectName" name="projectName" type="text" placeholder="Launch dashboard" />
+            </label>
+            <label class="field">
+              <span>Skills used</span>
+              <input id="projectSkills" name="projectSkills" type="text" placeholder="HTML, CSS, JavaScript, React" />
+            </label>
+            <label class="field">
+              <span>Preview</span>
+              <input id="projectPreview" name="projectPreview" type="text" placeholder="Realtime cards and filters" />
+            </label>
+            <label class="field">
+              <span>Description</span>
+              <textarea id="projectSummary" name="projectSummary" rows="3" placeholder="What this project shows"></textarea>
+            </label>
+            <label class="field">
+              <span>Project link</span>
+              <input id="projectLink" name="projectLink" type="url" placeholder="https://example.com/project" />
+            </label>
+            <button class="primary-button" id="projectSubmitBtn" type="submit">Add project</button>
+          </form>
+
+          <form class="stack-form editor-form" id="certificateForm" hidden>
+            <label class="field">
+              <span>Certificate name</span>
+              <input id="certificateName" name="certificateName" type="text" placeholder="Frontend Foundations" />
+            </label>
+            <label class="field">
+              <span>Skill</span>
+              <select id="certificateSkill" name="certificateSkill"></select>
+            </label>
+            <label class="field">
+              <span>Issuer</span>
+              <input id="certificateIssuer" name="certificateIssuer" type="text" placeholder="Coursera" />
+            </label>
+            <label class="field">
+              <span>PDF link</span>
+              <input id="certificatePdf" name="certificatePdf" type="url" placeholder="https://example.com/certificate.pdf" />
+            </label>
+            <button class="primary-button" id="certificateSubmitBtn" type="submit">Add certificate</button>
+          </form>
+        </section>
+
+        <section class="panel details-panel" id="detailsPanel">
+          <div class="panel-head">
+            <p class="eyebrow">Selection</p>
+            <h2 id="detailsTitle">Profile</h2>
+          </div>
+          <p class="details-copy" id="detailsCopy">Add your first skill to begin.</p>
+          <div class="chip-row" id="detailsChips"></div>
+          <div class="detail-actions" id="selectionActions" hidden>
+            <button class="secondary-button" id="editSelectedBtn" type="button">Update</button>
+            <button class="danger-button" id="deleteSelectedBtn" type="button">Delete</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <aside class="pro-drawer" id="proDrawer" hidden aria-label="Pro mode tools">
+      <div class="pro-drawer-head">
+        <div>
+          <p class="eyebrow">Pro tools</p>
+          <h2>Build the tree</h2>
+        </div>
+        <button class="close-button" id="closeProDrawerBtn" type="button" aria-label="Close Pro tools">x</button>
+      </div>
+      <div class="drawer-actions">
+        <button class="drawer-action" type="button" data-pro-action="skill">Add skill</button>
+        <button class="drawer-action" type="button" data-pro-action="subskill">Add subskill</button>
+        <button class="drawer-action" type="button" data-pro-action="project">Add project</button>
+        <button class="drawer-action" type="button" data-pro-action="certificate">Add certificate</button>
+        <button class="drawer-action" type="button" data-pro-action="connect">Connect</button>
+        <button class="drawer-action" type="button" data-pro-action="cut">Cut</button>
+        <button class="drawer-action" type="button" data-pro-action="arrange">Arrange</button>
+        <button class="drawer-action" type="button" data-pro-action="edit">Update selected</button>
+        <button class="drawer-action danger" type="button" data-pro-action="delete">Delete selected</button>
+        <button class="drawer-action" type="button" data-pro-action="exit">Exit Pro mode</button>
+      </div>
+    </aside>
+
+    <div class="node-menu" id="nodeMenu" hidden role="dialog" aria-label="Node actions">
+      <p id="nodeMenuTitle">Node actions</p>
+      <button type="button" data-node-action="subskill">Add subskill</button>
+      <button type="button" data-node-action="project">Add project</button>
+      <button type="button" data-node-action="certificate">Add certification</button>
+      <button class="danger" type="button" data-node-action="delete">Delete</button>
+    </div>
+
+    <div class="modal-backdrop" id="toolModal" hidden>
+      <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow" id="modalEyebrow">Pro mode</p>
+            <h2 id="modalTitle">Add skill</h2>
+          </div>
+          <button class="close-button" id="closeModalBtn" type="button" aria-label="Close">x</button>
+        </div>
+        <div id="modalFormMount"></div>
+      </section>
+    </div>
+
+    <section class="project-detail-card" id="projectDetailCard" hidden aria-live="polite">
+      <div class="project-detail-top">
+        <p class="eyebrow" id="detailEyebrow">Project</p>
+        <button class="close-button" id="closeProjectDetailBtn" type="button" aria-label="Close details">x</button>
+      </div>
+      <h2 id="projectDetailTitle">Project title</h2>
+      <p class="project-preview-text" id="projectDetailPreview"></p>
+      <p class="project-description-text" id="projectDetailDescription"></p>
+      <a class="project-link" id="projectDetailLink" href="#" target="_blank" rel="noreferrer" hidden>Open project</a>
+      <div class="detail-actions compact">
+        <button class="secondary-button" id="editDetailBtn" type="button">Update</button>
+        <button class="danger-button" id="deleteDetailBtn" type="button">Delete</button>
+      </div>
+    </section>
+
+    <script src="app.js"></script>
+  </body>
+</html>
