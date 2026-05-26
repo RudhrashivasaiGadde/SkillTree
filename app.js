@@ -37,6 +37,7 @@ const state = {
   editorMode: "skill",
   editingId: null,
   nodeMenuTarget: null,
+  creatingProfile: false,
   view: {
     x: 0,
     y: 0,
@@ -73,6 +74,10 @@ const els = {
   profileId: document.querySelector("#profileId"),
   profileName: document.querySelector("#profileName"),
   loadProfileBtn: document.querySelector("#loadProfileBtn"),
+  loadProfileModal: document.querySelector("#loadProfileModal"),
+  loadProfileForm: document.querySelector("#loadProfileForm"),
+  closeLoadProfileModalBtn: document.querySelector("#closeLoadProfileModalBtn"),
+  cancelLoadProfileBtn: document.querySelector("#cancelLoadProfileBtn"),
   profilePreview: document.querySelector("#profilePreview"),
   editorEyebrow: document.querySelector("#editorEyebrow"),
   editorTitle: document.querySelector("#editorTitle"),
@@ -983,8 +988,14 @@ function resetModes() {
 
 function handleProfileSubmit(event) {
   event.preventDefault();
-  state.profileId = slugify(els.profileId.value || "default");
-  state.profile.name = els.profileName.value.trim() || "Your Profile";
+  const nextName = els.profileName.value.trim() || "Your Profile";
+  state.profile.name = nextName;
+  if (state.creatingProfile) {
+    state.profileId = slugify(nextName === "Your Profile" ? "default" : nextName);
+    state.creatingProfile = false;
+  } else {
+    state.profileId = slugify(state.profileId || "default");
+  }
   state.profileNode.title = state.profile.name;
   state.profileNode.subtitle = "Stored locally";
   state.activeNodeId = "profile";
@@ -1500,6 +1511,7 @@ async function loadProfile(profileId = state.profileId) {
   } catch {
     normalizeLoadedProfile({ profileId, profile: { name: "Your Profile" }, skills: [], projects: [], certificates: [] });
   } finally {
+    state.creatingProfile = false;
     loadingProfile = false;
     render();
     arrangeGraph(true);
@@ -1530,15 +1542,52 @@ function queueSave() {
 }
 
 function showWorkspace(intent = "load") {
+  if (intent === "create") resetProfileDraft();
   document.body.classList.remove("home-active");
   els.homeScreen.hidden = true;
   els.appShell.hidden = false;
   closeToolModal();
+  closeLoadProfileDialog();
   window.setTimeout(() => {
     fitGraph();
-    const target = intent === "create" ? els.profileName : els.profileId;
-    target.focus();
+    els.profileName.focus();
   }, 80);
+}
+
+function resetProfileDraft() {
+  normalizeLoadedProfile({
+    profileId: "default",
+    profile: { name: "Your Profile" },
+    skills: [],
+    projects: [],
+    certificates: [],
+    customEdges: [],
+    cutEdges: [],
+  });
+  state.creatingProfile = true;
+  render();
+  arrangeGraph(true);
+}
+
+function openLoadProfileDialog() {
+  resetModes();
+  closeToolModal();
+  els.profileId.value = state.profileId || "default";
+  els.loadProfileModal.hidden = false;
+  window.setTimeout(() => els.profileId.focus(), 40);
+}
+
+function closeLoadProfileDialog() {
+  els.loadProfileModal.hidden = true;
+}
+
+async function handleLoadProfileSubmit(event) {
+  event.preventDefault();
+  const profileId = els.profileId.value.trim() || "default";
+  state.creatingProfile = false;
+  await loadProfile(profileId);
+  closeLoadProfileDialog();
+  showWorkspace("loaded");
 }
 
 function openAddMode(mode) {
@@ -1775,11 +1824,17 @@ els.canvas.addEventListener(
 );
 
 els.profileForm.addEventListener("submit", handleProfileSubmit);
-els.loadProfileBtn.addEventListener("click", () => loadProfile(els.profileId.value || "default"));
+els.loadProfileBtn.addEventListener("click", openLoadProfileDialog);
+els.loadProfileForm.addEventListener("submit", handleLoadProfileSubmit);
+els.closeLoadProfileModalBtn.addEventListener("click", closeLoadProfileDialog);
+els.cancelLoadProfileBtn.addEventListener("click", closeLoadProfileDialog);
+els.loadProfileModal.addEventListener("click", (event) => {
+  if (event.target === els.loadProfileModal) closeLoadProfileDialog();
+});
 els.skillForm.addEventListener("submit", handleSkillSubmit);
 els.projectForm.addEventListener("submit", handleProjectSubmit);
 els.certificateForm.addEventListener("submit", handleCertificateSubmit);
-els.homeLoadProfileBtn.addEventListener("click", () => showWorkspace("load"));
+els.homeLoadProfileBtn.addEventListener("click", openLoadProfileDialog);
 els.homeCreateProfileBtn.addEventListener("click", () => showWorkspace("create"));
 
 els.addSkillBtn.addEventListener("click", () => openAddMode("skill"));
@@ -1835,6 +1890,7 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     hideNodeMenu();
     toggleProDrawer(false);
+    closeLoadProfileDialog();
   }
 });
 

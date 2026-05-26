@@ -4,20 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SkillTree</title>
-    <link rel="icon" type="image/webp" href="logo.webp" />
+    <link rel="icon" type="image/webp" href="assets/logo.webp" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="dark-mode home-active">
     <div class="loading-screen" id="loadingScreen" aria-label="SkillTree loading">
       <div class="loader-lockup">
-        <img class="loader-logo" src="logo.webp" alt="" />
+        <span class="loader-logo brand-mark" aria-hidden="true"></span>
         <span class="loader-word">SkillTree</span>
       </div>
     </div>
 
     <header class="topbar">
       <a class="brand" href="#" aria-label="SkillTree">
-        <img class="brand-logo" src="logo.webp" alt="" />
+        <span class="brand-mark" aria-hidden="true"></span>
         <span>SkillTree</span>
       </a>
 
@@ -71,7 +71,7 @@
     <main class="home-screen" id="homeScreen">
       <section class="home-hero" aria-labelledby="homeTitle">
         <div class="home-brand-row">
-          <img class="home-logo" src="logo.webp" alt="" />
+          <span class="home-logo brand-mark" aria-hidden="true"></span>
           <span>SkillTree</span>
         </div>
         <h1 id="homeTitle">Map your skills, projects, and certificates in one connected workspace.</h1>
@@ -153,10 +153,6 @@
             <h2>Stored profile</h2>
           </div>
           <form class="stack-form" id="profileForm">
-            <label class="field">
-              <span>Profile key</span>
-              <input id="profileId" name="profileId" type="text" autocomplete="off" placeholder="default" />
-            </label>
             <label class="field">
               <span>Name</span>
               <input id="profileName" name="profileName" type="text" autocomplete="name" placeholder="Your name" />
@@ -299,6 +295,28 @@
       <button type="button" data-node-action="project">Add project</button>
       <button type="button" data-node-action="certificate">Add certification</button>
       <button class="danger" type="button" data-node-action="delete">Delete</button>
+    </div>
+
+    <div class="modal-backdrop" id="loadProfileModal" hidden>
+      <section class="modal-card profile-key-card" role="dialog" aria-modal="true" aria-labelledby="loadProfileTitle">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Profile key</p>
+            <h2 id="loadProfileTitle">Load profile</h2>
+          </div>
+          <button class="close-button" id="closeLoadProfileModalBtn" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="stack-form" id="loadProfileForm">
+          <label class="field">
+            <span>Profile key</span>
+            <input id="profileId" name="profileId" type="text" autocomplete="off" placeholder="default" />
+          </label>
+          <div class="split-actions">
+            <button class="primary-button" type="submit">Load profile</button>
+            <button class="secondary-button" id="cancelLoadProfileBtn" type="button">Cancel</button>
+          </div>
+        </form>
+      </section>
     </div>
 
     <div class="modal-backdrop" id="toolModal" hidden>
